@@ -77,14 +77,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "GREEN ODDS ARENA 🔥💚" },
+      {
+        name: "description",
+        content: "Private arena for daily verified SportyBet booking codes. ₦1,500 unlocks 10 days.",
+      },
+      { name: "author", content: "GREEN ODDS ARENA" },
+      { property: "og:title", content: "GREEN ODDS ARENA 🔥💚" },
+      {
+        property: "og:description",
+        content: "Private arena for daily verified SportyBet booking codes.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+
     ],
     links: [
       {
