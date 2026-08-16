@@ -85,14 +85,14 @@ function AdminPage() {
       created_by: user.id,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Code posted 🔥");
     setForm({ title: "", booking_code: "", bookmaker: "SportyBet", total_odds: "", description: "" });
   };
 
   const review = async (id: string, status: "approved" | "rejected") => {
     const { error } = await supabase.from("payments").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Payment ${status}`);
     void load();
   };

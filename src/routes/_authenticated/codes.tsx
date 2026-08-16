@@ -99,10 +99,10 @@ function CodesPage() {
     const { error } = await supabase.from("code_comments").insert({
       code_id: codeId,
       user_id: user.id,
-      author_name: profile?.display_name ?? profile?.email,
+      author_name: profile?.display_name ?? profile?.email ?? null,
       content,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setDraft((d) => ({ ...d, [codeId]: "" }));
     void load();
   };
