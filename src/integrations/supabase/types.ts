@@ -86,7 +86,9 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
+          image_url: string | null
           kickoff_at: string | null
+          market: string | null
           title: string
           total_odds: number | null
         }
@@ -97,7 +99,9 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
+          image_url?: string | null
           kickoff_at?: string | null
+          market?: string | null
           title: string
           total_odds?: number | null
         }
@@ -108,7 +112,9 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
+          image_url?: string | null
           kickoff_at?: string | null
+          market?: string | null
           title?: string
           total_odds?: number | null
         }
