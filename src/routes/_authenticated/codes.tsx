@@ -27,8 +27,10 @@ type Code = {
   title: string;
   booking_code: string;
   bookmaker: string;
+  market: string | null;
   total_odds: number | null;
   description: string | null;
+  image_url: string | null;
   kickoff_at: string | null;
   created_at: string;
 };
@@ -112,10 +114,15 @@ function CodesPage() {
     void load();
   };
 
+  const copyCode = async (code: string) => {
+    await navigator.clipboard.writeText(code);
+    toast.success("Code copied");
+  };
+
   const shareCode = async (code: Code) => {
     const text = `🔥💚 GREEN ODDS ARENA\n${code.title}\n${code.bookmaker} code: ${code.booking_code}${
       code.total_odds ? `\nOdds: ${code.total_odds}` : ""
-    }`;
+    }${code.market ? `\nMarket: ${code.market}` : ""}`;
     const url = window.location.origin;
     if (navigator.share) {
       try {
@@ -126,7 +133,7 @@ function CodesPage() {
       }
     }
     await navigator.clipboard.writeText(`${text}\n${url}`);
-    toast.success("Copied — paste it anywhere to share");
+    toast.success("Code copied — paste it anywhere to share");
   };
 
   return (
@@ -155,6 +162,7 @@ function CodesPage() {
                   <h2 className="text-lg font-bold">{code.title}</h2>
                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
                     {code.bookmaker}
+                    {code.market ? ` · ${code.market}` : ""}
                     {code.total_odds ? ` · ${code.total_odds} odds` : ""} ·{" "}
                     {new Date(code.created_at).toLocaleString()}
                   </p>
@@ -173,12 +181,23 @@ function CodesPage() {
                 )}
               </div>
 
+              {code.image_url && (
+                <button
+                  type="button"
+                  onClick={() => copyCode(code.booking_code)}
+                  className="mt-4 block w-full overflow-hidden rounded-xl border border-border"
+                >
+                  <img
+                    src={code.image_url}
+                    alt={`${code.title} code screenshot`}
+                    className="w-full object-contain"
+                  />
+                </button>
+              )}
+
               <button
                 type="button"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(code.booking_code);
-                  toast.success("Code copied");
-                }}
+                onClick={() => copyCode(code.booking_code)}
                 className="mt-4 flex w-full items-center justify-between rounded-xl border border-primary/40 bg-primary/10 px-4 py-3 text-left"
               >
                 <span className="font-mono text-xl font-bold tracking-widest text-primary">
