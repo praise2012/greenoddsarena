@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth";
 import { ACCESS_FEE } from "@/lib/site";
 
@@ -42,6 +43,20 @@ type Profile = {
   access_expires_at: string | null;
 };
 
+const MARKETS = [
+  "Football",
+  "Basketball",
+  "Tennis",
+  "Baseball",
+  "Ice Hockey",
+  "American Football",
+  "Cricket",
+  "Rugby",
+  "Boxing",
+  "Esports",
+  "Other",
+];
+
 function AdminPage() {
   const { isAdmin, user } = useAuth();
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -50,9 +65,12 @@ function AdminPage() {
     title: "",
     booking_code: "",
     bookmaker: "SportyBet",
+    market: "Football",
     total_odds: "",
     description: "",
   });
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageName, setImageName] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
@@ -72,6 +90,19 @@ function AdminPage() {
     return <p className="px-6 py-20 text-center text-muted-foreground">Admins only.</p>;
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2MB");
+      return;
+    }
+    setImageName(file.name);
+    const reader = new FileReader();
+    reader.onloadend = () => setImageBase64(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const postCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -80,14 +111,18 @@ function AdminPage() {
       title: form.title.trim(),
       booking_code: form.booking_code.trim().toUpperCase(),
       bookmaker: form.bookmaker.trim() || "SportyBet",
+      market: form.market,
       total_odds: form.total_odds ? Number(form.total_odds) : null,
       description: form.description.trim() || null,
+      image_url: imageBase64,
       created_by: user.id,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Code posted 🔥");
-    setForm({ title: "", booking_code: "", bookmaker: "SportyBet", total_odds: "", description: "" });
+    setForm({ title: "", booking_code: "", bookmaker: "SportyBet", market: "Football", total_odds: "", description: "" });
+    setImageBase64(null);
+    setImageName(null);
   };
 
   const review = async (id: string, status: "approved" | "rejected") => {
@@ -149,22 +184,58 @@ function AdminPage() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="bookmaker">Bookmaker</Label>
-              <Input
-                id="bookmaker"
-                value={form.bookmaker}
-                onChange={(e) => setForm({ ...form, bookmaker: e.target.value })}
-              />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="bookmaker">Bookmaker</Label>
+                <Input
+                  id="bookmaker"
+                  value={form.bookmaker}
+                  onChange={(e) => setForm({ ...form, bookmaker: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Market / sport</Label>
+                <Select
+                  value={form.market}
+                  onValueChange={(v) => setForm({ ...form, market: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pick a market" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MARKETS.map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="desc">Details / games</Label>
+              <Label htmlFor="desc">Description / market selection picked</Label>
               <Textarea
                 id="desc"
                 rows={4}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="e.g. Over 2.5, Both teams to score, Handicap..."
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="image">Code photo / screenshot</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {imageName && <p className="text-xs text-muted-foreground">Selected: {imageName}</p>}
+              {imageBase64 && (
+                <img
+                  src={imageBase64}
+                  alt="Preview"
+                  className="mt-2 max-h-48 rounded-xl border border-border object-contain"
+                />
+              )}
             </div>
             <Button type="submit" disabled={busy} className="w-full">
               {busy ? "Posting..." : "Post code"}
