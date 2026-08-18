@@ -103,24 +103,25 @@ function UnlockPage() {
 
       <div className="mt-5 rounded-2xl border border-border bg-card p-5">
         <h2 className="font-bold">Step 1 — Send ₦{ACCESS_FEE.toLocaleString()}</h2>
-        <div className="mt-3 space-y-1 text-sm">
-          <p className="text-muted-foreground">Bank: <span className="text-foreground">{BANK_DETAILS.bank}</span></p>
-          <p className="text-muted-foreground">
-            Account name: <span className="text-foreground">{BANK_DETAILS.accountName}</span>
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">Account number:</span>
-            <span className="font-mono text-lg font-bold text-primary">{BANK_DETAILS.accountNumber}</span>
-            <button
-              onClick={async () => {
-                await navigator.clipboard.writeText(BANK_DETAILS.accountNumber);
-                toast.success("Account number copied");
-              }}
-            >
-              <Copy className="h-4 w-4 text-primary" />
-            </button>
-          </div>
+        <div className="mt-3 space-y-1 rounded-xl bg-secondary/50 p-4 font-mono text-sm leading-relaxed">
+          <p>┌─「 🏦 ᴘᴀʏᴍᴇɴᴛ ɪɴғᴏ 」</p>
+          <p>├─❏ ɴᴀᴍᴇ: {BANK_DETAILS.accountName}</p>
+          <p>├─❏ ᴀᴄᴄ ɴᴏ: {BANK_DETAILS.accountNumber}</p>
+          <p>├─❏ ʙᴀɴᴋ: {BANK_DETAILS.bank}</p>
+          <p>└─❏ ᴅʀᴏᴘ sᴄʀᴇᴇɴsʜᴏᴛ ᴀғᴛᴇʀ ᴘᴀʏᴍᴇɴᴛ ✅</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-3 w-full"
+          onClick={async () => {
+            const text = `🏦 PAYMENT INFO\nNAME: ${BANK_DETAILS.accountName}\nACC NO: ${BANK_DETAILS.accountNumber}\nBANK: ${BANK_DETAILS.bank}\nDROP SCREENSHOT AFTER PAYMENT ✅`;
+            await navigator.clipboard.writeText(text);
+            toast.success("Payment info copied");
+          }}
+        >
+          <Copy className="mr-2 h-4 w-4" /> Copy payment details
+        </Button>
       </div>
 
       <form onSubmit={submit} className="mt-5 space-y-4 rounded-2xl border border-border bg-card p-5">
